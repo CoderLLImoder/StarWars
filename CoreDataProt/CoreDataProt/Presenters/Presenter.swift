@@ -10,6 +10,7 @@ import Foundation
 protocol ViewOutputDelegate: AnyObject {
     func getData()
     func saveData()
+    func updateUser(user: User, newFullName: String, newBirthDay: Date, newIsMale: Bool, newAva: String)
     func addUser(fullName: String, birthDay: Date, isMale: Bool, ava: String)
     func deleteUser(user: User, indexPath: IndexPath)
     func clearUsers()
@@ -18,6 +19,7 @@ protocol ViewOutputDelegate: AnyObject {
 final class Presenter {
     
     weak private var viewInputDelegate: ViewInputDelegate?
+    private var coreDataManager = CoreDataManager()
     var users = [User]()
     
     func setViewinputDelegate(viewinputDelegate: ViewInputDelegate) {
@@ -25,34 +27,43 @@ final class Presenter {
     }
     
     func createDefaultData() {
-        CoreDataManager.instance.createDefualtValues()
+        coreDataManager.createDefualtValues()
     }
     
     func getDataFromCD() {
-        self.users = CoreDataManager.instance.getUsers()
+        self.users = coreDataManager.readUsers()
         self.viewInputDelegate?.setupData(data: self.users)
     }
     
     func saveDataToCD() {
-        CoreDataManager.instance.saveContext()
+        coreDataManager.saveContext()
     }
     
     func addUserToCD(fullName: String, birthDay: Date, isMale: Bool, ava: String) {
-        CoreDataManager.instance.addUser(fullName: fullName, birthDay: birthDay, isMale: isMale, ava: ava)
+        coreDataManager.createUser(fullName: fullName, birthDay: birthDay, isMale: isMale, ava: ava)
     }
     
     func deleteUserFromCD(user: User, indexPath: IndexPath) {
-        CoreDataManager.instance.deleteUser(user: user)
+        coreDataManager.deleteUser(user: user)
         self.viewInputDelegate?.deleteData(indexPath: indexPath)
     }
     
     func clearUsersFromCD() {
-        CoreDataManager.instance.clearUsers()
+        coreDataManager.clearUsers()
+    }
+    
+    func updateUserInCD(user: User, newFullName: String, newBirthDay: Date, newIsMale: Bool, newAva: String) {
+        coreDataManager.updateUser(user: user, newFullName: newFullName, newBirthDay: newBirthDay, newIsMale: newIsMale, newAva: newAva)
     }
     
 }
 
 extension Presenter: ViewOutputDelegate {
+    
+    func updateUser(user: User, newFullName: String, newBirthDay: Date, newIsMale: Bool, newAva: String) {
+        self.updateUserInCD(user: user, newFullName: newFullName, newBirthDay: newBirthDay, newIsMale: newIsMale, newAva: newAva)
+    }
+    
     func getData() {
         self.createDefaultData()
         self.getDataFromCD()

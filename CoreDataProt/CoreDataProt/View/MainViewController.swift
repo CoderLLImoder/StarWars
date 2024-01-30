@@ -21,7 +21,7 @@ final class MainViewController: UIViewController {
     
     private lazy var textField: UITextField = {
         let textField = UITextField()
-        textField.text = "New character.."
+        textField.placeholder = "New character.."
         textField.textColor = UIColor.black
         textField.translatesAutoresizingMaskIntoConstraints = false
         textField.backgroundColor = .white
@@ -121,6 +121,7 @@ extension MainViewController: UITableViewDataSource, UITableViewDelegate, Detail
     
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         let detailVC = DetailViewController()
+        detailVC.presenter = presenter
         let cell = tableView.cellForRow(at: indexPath)
         let id = String(users[indexPath.row].id)
         print(cell?.textLabel?.text ?? "" + id)

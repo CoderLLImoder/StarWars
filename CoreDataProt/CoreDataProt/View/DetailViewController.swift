@@ -13,6 +13,9 @@ protocol DetailVCDelegate {
 
 final class DetailViewController: UIViewController{
     
+    var presenter = Presenter()
+    weak private var viewOutputDelegate: ViewOutputDelegate?
+    
     var delegate: DetailVCDelegate?
     
     func update() {
@@ -117,6 +120,8 @@ final class DetailViewController: UIViewController{
     
     
     override func viewDidLoad() {
+
+        self.viewOutputDelegate = presenter
         super.viewDidLoad()
         setupViewSettings()
         setupHierarchy()
@@ -190,7 +195,7 @@ final class DetailViewController: UIViewController{
     
     @objc func buttonPressed () {
         if (button.isSelected) {
-            CoreDataManager.instance.updateUser(user: self.user!, newFullName: self.name.text ?? "No name", newBirthDay: self.birth.date, newIsMale: self.gender.selectedSegmentIndex == 0, newAva: (self.user?.ava)!)
+            self.viewOutputDelegate?.updateUser(user: self.user!, newFullName: self.name.text ?? "No name", newBirthDay: self.birth.date, newIsMale: self.gender.selectedSegmentIndex == 0, newAva: (self.user?.ava)!)
             viewDidLoad()
             update()
         }
